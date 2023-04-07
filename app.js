@@ -3,6 +3,8 @@ const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 const Student = require("./models/student");
+const facultyRoutes = require("./routes/faculty-routes");
+
 require("dotenv").config();
 
 app.set("view engine", "ejs");
@@ -76,6 +78,8 @@ app.delete("/students/:_id", async (req, res) => {
     return res.status(400).send("無法刪除學生資料。。。");
   }
 });
+
+app.use("/faculty", facultyRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Listening on port ${process.env.PORT}...`);
