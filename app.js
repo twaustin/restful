@@ -33,9 +33,14 @@ app.get("/students/:_id", async (req, res) => {
   let { _id } = req.params;
   try {
     let foundStudent = await Student.findOne({ _id }).exec();
-    return res.send(foundStudent);
+    // return res.send(foundStudent);
+    if (foundStudent != null) {
+      return res.render("student-page", { foundStudent });
+    } else {
+      return res.status(404).send("student-not-found");
+    }
   } catch (e) {
-    return res.status(500).send("尋找資料時發生錯誤。。。");
+    return res.status(400).send("尋找資料時發生錯誤。。。");
   }
 });
 
@@ -57,7 +62,7 @@ app.post("/students", async (req, res) => {
       data: savedStudent,
     });
   } catch (e) {
-    return res.status(500).send("儲存失敗");
+    return res.status(500).send("儲存失敗。。。");
   }
 });
 
@@ -68,10 +73,10 @@ app.delete("/students/:_id", async (req, res) => {
     return res.send(deleteResult);
   } catch (e) {
     console.log(e);
-    return res.status(500).send("無法刪除學生資料");
+    return res.status(400).send("無法刪除學生資料。。。");
   }
 });
 
 app.listen(process.env.PORT, () => {
-  console.log("Listening on port 3000...");
+  console.log(`Listening on port ${process.env.PORT}...`);
 });
