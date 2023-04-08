@@ -1,16 +1,30 @@
 const express = require("express");
+require("dotenv").config();
 const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+
 const Student = require("./models/student");
 const facultyRoutes = require("./routes/faculty-routes");
-
-require("dotenv").config();
+const sessionRoutes = require("./routes/session-routes");
 
 app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(express.static("public"));
+
+app.use(cookieParser(process.env.COOKIE_SECRET_KEY));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }, // localhost
+  })
+);
 
 mongoose
   .connect(process.env.MOGODB_URL)
@@ -80,6 +94,7 @@ app.delete("/students/:_id", async (req, res) => {
 });
 
 app.use("/faculty", facultyRoutes);
+app.use("/session", sessionRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Listening on port ${process.env.PORT}...`);
